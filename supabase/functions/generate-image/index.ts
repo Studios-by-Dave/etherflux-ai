@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt, style, model } = await req.json();
+    const { prompt, style, model, referenceImage } = await req.json();
 
     if (!prompt || typeof prompt !== "string") {
       return new Response(
@@ -47,8 +47,25 @@ serve(async (req) => {
     const modifier = styleModifiers[style] || "";
     const fullPrompt = modifier ? `${prompt}, ${modifier}` : prompt;
 
-    console.log(`Generating image with model hint: ${model}, style: ${style}`);
+    console.log(`Generating image with model hint: ${model}, style: ${style}, hasReference: ${!!referenceImage}`);
     console.log(`Full prompt: ${fullPrompt}`);
+
+    // Build message content - text only or multimodal with reference image
+    let userContent: any;
+    if (referenceImage) {
+      userContent = [
+        {
+          type: "text",
+          text: `Using the provided reference image as inspiration and guidance, generate a new image: ${fullPrompt}`,
+        },
+        {
+          type: "image_url",
+          image_url: { url: referenceImage },
+        },
+      ];
+    } else {
+      userContent = `Generate an image: ${fullPrompt}`;
+    }
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -63,7 +80,7 @@ serve(async (req) => {
           messages: [
             {
               role: "user",
-              content: `Generate an image: ${fullPrompt}`,
+              content: userContent,
             },
           ],
           modalities: ["image", "text"],

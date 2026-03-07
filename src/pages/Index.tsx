@@ -10,6 +10,7 @@ import SlotMachine from "@/components/SlotMachine";
 import ImageGallery, { type GeneratedImage } from "@/components/ImageGallery";
 import PromptHistory, { type PromptHistoryEntry } from "@/components/PromptHistory";
 import ImageDoctor from "@/components/ImageDoctor";
+import ImageReferenceUpload from "@/components/ImageReferenceUpload";
 import { supabase } from "@/integrations/supabase/client";
 
 const STYLE_MAP: Record<string, string> = {
@@ -32,6 +33,7 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
 
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || isGenerating) return;
@@ -53,6 +55,7 @@ const Index = () => {
           prompt: prompt.trim(),
           style: selectedStyle,
           model: STYLE_MAP[selectedModel] || selectedModel,
+          referenceImage: referenceImage || undefined,
         },
       });
 
@@ -80,7 +83,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [prompt, selectedModel, selectedStyle, isGenerating]);
+  }, [prompt, selectedModel, selectedStyle, isGenerating, referenceImage]);
 
   const handleEnhance = () => {
     if (!prompt.trim()) return;
@@ -140,10 +143,14 @@ const Index = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+              <ImageReferenceUpload referenceImage={referenceImage} onImageChange={setReferenceImage} />
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.18 }}>
               <PromptBuilder onApplyBlocks={handleApplyBlocks} />
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.22 }}>
               <StylePanel selectedStyle={selectedStyle} onStyleChange={setSelectedStyle} />
             </motion.div>
 
