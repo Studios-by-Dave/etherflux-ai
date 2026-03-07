@@ -8,6 +8,7 @@ import PromptBuilder from "@/components/PromptBuilder";
 import SlotMachine from "@/components/SlotMachine";
 import ImageGallery, { type GeneratedImage } from "@/components/ImageGallery";
 import PromptHistory, { type PromptHistoryEntry } from "@/components/PromptHistory";
+import ImageDoctor from "@/components/ImageDoctor";
 
 const STYLE_MAP: Record<string, string> = {
   "nano-banana": "Nano Banana",
