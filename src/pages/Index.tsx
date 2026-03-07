@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import Header from "@/components/Header";
 import ModelSelector from "@/components/ModelSelector";
 import PromptInput from "@/components/PromptInput";
@@ -9,6 +10,7 @@ import SlotMachine from "@/components/SlotMachine";
 import ImageGallery, { type GeneratedImage } from "@/components/ImageGallery";
 import PromptHistory, { type PromptHistoryEntry } from "@/components/PromptHistory";
 import ImageDoctor from "@/components/ImageDoctor";
+import { supabase } from "@/integrations/supabase/client";
 
 const STYLE_MAP: Record<string, string> = {
   "nano-banana": "Nano Banana",
@@ -31,7 +33,7 @@ const Index = () => {
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
 
-  const handleGenerate = useCallback(() => {
+  const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || isGenerating) return;
 
     setIsGenerating(true);
@@ -45,18 +47,39 @@ const Index = () => {
     };
     setHistory((prev) => [historyEntry, ...prev.slice(0, 19)]);
 
-    // Simulate generation
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-image", {
+        body: {
+          prompt: prompt.trim(),
+          style: selectedStyle,
+          model: STYLE_MAP[selectedModel] || selectedModel,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message || "Generation failed");
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
       const newImage: GeneratedImage = {
         id: crypto.randomUUID(),
         prompt: prompt.trim(),
         style: selectedStyle,
         model: STYLE_MAP[selectedModel] || selectedModel,
         timestamp: Date.now(),
+        imageUrl: data.imageUrl,
       };
       setImages((prev) => [newImage, ...prev]);
+      toast.success("Image forged successfully!");
+    } catch (err: any) {
+      console.error("Generation error:", err);
+      toast.error(err.message || "Failed to generate image. Please try again.");
+    } finally {
       setIsGenerating(false);
-    }, 2500);
+    }
   }, [prompt, selectedModel, selectedStyle, isGenerating]);
 
   const handleEnhance = () => {
@@ -102,19 +125,11 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main content - 3 columns */}
           <div className="lg:col-span-3 space-y-5">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <ModelSelector selectedModel={selectedModel} onModelChange={setSelectedModel} />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
               <PromptInput
                 prompt={prompt}
                 onPromptChange={setPrompt}
@@ -124,54 +139,30 @@ const Index = () => {
               />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
               <PromptBuilder onApplyBlocks={handleApplyBlocks} />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
               <StylePanel selectedStyle={selectedStyle} onStyleChange={setSelectedStyle} />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
               <ImageGallery images={images} isGenerating={isGenerating} />
             </motion.div>
           </div>
 
           {/* Sidebar - 1 column */}
           <div className="space-y-5">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
-            >
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
               <ImageDoctor />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
               <SlotMachine onResult={handleSlotResult} />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
               <PromptHistory
                 history={history}
                 onSelectPrompt={setPrompt}
