@@ -1,12 +1,194 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
+import Header from "@/components/Header";
+import ModelSelector from "@/components/ModelSelector";
+import PromptInput from "@/components/PromptInput";
+import StylePanel from "@/components/StylePanel";
+import PromptBuilder from "@/components/PromptBuilder";
+import SlotMachine from "@/components/SlotMachine";
+import ImageGallery, { type GeneratedImage } from "@/components/ImageGallery";
+import PromptHistory, { type PromptHistoryEntry } from "@/components/PromptHistory";
+
+const STYLE_MAP: Record<string, string> = {
+  "nano-banana": "Nano Banana",
+  "diffusion-core": "Diffusion Core",
+  "hyperreal-xl": "HyperReal XL",
+  "dreampainter": "DreamPainter",
+  "vectorvision": "VectorVision",
+  "stylize-ai": "StylizeAI",
+};
+
+const MODEL_REVERSE: Record<string, string> = Object.fromEntries(
+  Object.entries(STYLE_MAP).map(([k, v]) => [v, k])
+);
 
 const Index = () => {
+  const [prompt, setPrompt] = useState("");
+  const [selectedModel, setSelectedModel] = useState("diffusion-core");
+  const [selectedStyle, setSelectedStyle] = useState("realistic");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [images, setImages] = useState<GeneratedImage[]>([]);
+  const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
+
+  const handleGenerate = useCallback(() => {
+    if (!prompt.trim() || isGenerating) return;
+
+    setIsGenerating(true);
+
+    // Add to history
+    const historyEntry: PromptHistoryEntry = {
+      id: crypto.randomUUID(),
+      prompt: prompt.trim(),
+      timestamp: Date.now(),
+      isFavorite: false,
+    };
+    setHistory((prev) => [historyEntry, ...prev.slice(0, 19)]);
+
+    // Simulate generation
+    setTimeout(() => {
+      const newImage: GeneratedImage = {
+        id: crypto.randomUUID(),
+        prompt: prompt.trim(),
+        style: selectedStyle,
+        model: STYLE_MAP[selectedModel] || selectedModel,
+        timestamp: Date.now(),
+      };
+      setImages((prev) => [newImage, ...prev]);
+      setIsGenerating(false);
+    }, 2500);
+  }, [prompt, selectedModel, selectedStyle, isGenerating]);
+
+  const handleEnhance = () => {
+    if (!prompt.trim()) return;
+    const enhancers = [
+      ", highly detailed, 8k resolution, masterpiece quality",
+      ", cinematic lighting, dramatic composition, ultra realistic",
+      ", professional photography, award winning, stunning detail",
+    ];
+    setPrompt(prompt + enhancers[Math.floor(Math.random() * enhancers.length)]);
+  };
+
+  const handleSlotResult = (result: { theme: string; style: string; palette: string; model: string }) => {
+    const builtPrompt = `${result.theme} in ${result.style} style with ${result.palette} color palette`;
+    setPrompt(builtPrompt);
+    const modelKey = MODEL_REVERSE[result.model];
+    if (modelKey) setSelectedModel(modelKey);
+  };
+
+  const handleApplyBlocks = (blocks: Record<string, string>) => {
+    const parts = Object.entries(blocks).map(([, v]) => v);
+    const builtPrompt = parts.join(", ") + " composition";
+    setPrompt(builtPrompt);
+  };
+
+  const handleToggleFavorite = (id: string) => {
+    setHistory((prev) => prev.map((h) => (h.id === id ? { ...h, isFavorite: !h.isFavorite } : h)));
+  };
+
+  const handleDeleteHistory = (id: string) => {
+    setHistory((prev) => prev.filter((h) => h.id !== id));
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background relative">
+      {/* Subtle ambient glow */}
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <Header />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main content - 3 columns */}
+          <div className="lg:col-span-3 space-y-5">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <ModelSelector selectedModel={selectedModel} onModelChange={setSelectedModel} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <PromptInput
+                prompt={prompt}
+                onPromptChange={setPrompt}
+                onGenerate={handleGenerate}
+                onEnhance={handleEnhance}
+                isGenerating={isGenerating}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              <PromptBuilder onApplyBlocks={handleApplyBlocks} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <StylePanel selectedStyle={selectedStyle} onStyleChange={setSelectedStyle} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+            >
+              <ImageGallery images={images} isGenerating={isGenerating} />
+            </motion.div>
+          </div>
+
+          {/* Sidebar - 1 column */}
+          <div className="space-y-5">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <SlotMachine onResult={handleSlotResult} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <PromptHistory
+                history={history}
+                onSelectPrompt={setPrompt}
+                onToggleFavorite={handleToggleFavorite}
+                onDelete={handleDeleteHistory}
+              />
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Footer bar */}
+        <div className="mt-8 py-4 border-t border-border flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-[10px] text-muted-foreground">
+              {images.length} IMAGE{images.length !== 1 ? "S" : ""} FORGED
+            </span>
+            <span className="font-mono text-[10px] text-muted-foreground">•</span>
+            <span className="font-mono text-[10px] text-muted-foreground">
+              MODEL: {STYLE_MAP[selectedModel]?.toUpperCase()}
+            </span>
+          </div>
+          <span className="font-mono text-[10px] text-muted-foreground/50">
+            FORGEIMG NEURAL IMAGE FOUNDRY © 2026
+          </span>
+        </div>
+      </main>
     </div>
   );
 };
