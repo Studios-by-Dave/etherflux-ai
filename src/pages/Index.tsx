@@ -8,6 +8,7 @@ import PromptBuilder from "@/components/PromptBuilder";
 import SlotMachine from "@/components/SlotMachine";
 import ImageGallery, { type GeneratedImage } from "@/components/ImageGallery";
 import PromptHistory, { type PromptHistoryEntry } from "@/components/PromptHistory";
+import ImageDoctor from "@/components/ImageDoctor";
 
 const STYLE_MAP: Record<string, string> = {
   "nano-banana": "Nano Banana",
@@ -150,6 +151,14 @@ const Index = () => {
 
           {/* Sidebar - 1 column */}
           <div className="space-y-5">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+            >
+              <ImageDoctor />
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
