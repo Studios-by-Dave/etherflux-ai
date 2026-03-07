@@ -10,6 +10,7 @@ import SlotMachine from "@/components/SlotMachine";
 import ImageGallery, { type GeneratedImage } from "@/components/ImageGallery";
 import PromptHistory, { type PromptHistoryEntry } from "@/components/PromptHistory";
 import ImageDoctor from "@/components/ImageDoctor";
+import ImageReferenceUpload from "@/components/ImageReferenceUpload";
 import { supabase } from "@/integrations/supabase/client";
 
 const STYLE_MAP: Record<string, string> = {
