@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, RefreshCw, Maximize2, Image as ImageIcon } from "lucide-react";
+import { Download, Share2, Link as LinkIcon, Image as ImageIcon, Check } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GeneratedImage {
   id: string;
@@ -9,6 +11,9 @@ interface GeneratedImage {
   model: string;
   timestamp: number;
   imageUrl?: string;
+  shareSlug?: string;
+  isPublic?: boolean;
+  imagePath?: string;
 }
 
 interface ImageGalleryProps {
@@ -18,6 +23,7 @@ interface ImageGalleryProps {
 
 const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const handleDownload = (img: GeneratedImage) => {
     if (!img.imageUrl) return;
@@ -25,6 +31,27 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
     link.href = img.imageUrl;
     link.download = `forgeimg-${img.id.slice(0, 8)}.png`;
     link.click();
+  };
+
+  const handleShare = async (img: GeneratedImage) => {
+    if (!img.shareSlug) return;
+
+    // Toggle public
+    const { error } = await supabase
+      .from("generated_images")
+      .update({ is_public: true })
+      .eq("share_slug", img.shareSlug);
+
+    if (error) {
+      toast.error("Failed to make image public");
+      return;
+    }
+
+    const shareUrl = `${window.location.origin}/shared/${img.shareSlug}`;
+    await navigator.clipboard.writeText(shareUrl);
+    setCopiedId(img.id);
+    toast.success("Share link copied to clipboard!");
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   if (images.length === 0 && !isGenerating) {
@@ -82,16 +109,9 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
                   loading="lazy"
                 />
               ) : (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/20 via-neon-purple/20 to-neon-pink/20" />
-                  <div className="absolute inset-0 diamond-plate opacity-10" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 blur-xl" />
-                  </div>
-                </>
+                <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/20 via-neon-purple/20 to-neon-pink/20" />
               )}
 
-              {/* Hover overlay */}
               {hoveredId === img.id && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -107,12 +127,19 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
                     >
                       <Download className="w-3.5 h-3.5 text-foreground" />
                     </button>
-                    <button className="p-1.5 rounded bg-secondary hover:bg-primary/20 transition-colors" title="Regenerate">
-                      <RefreshCw className="w-3.5 h-3.5 text-foreground" />
-                    </button>
-                    <button className="p-1.5 rounded bg-secondary hover:bg-primary/20 transition-colors" title="Upscale">
-                      <Maximize2 className="w-3.5 h-3.5 text-foreground" />
-                    </button>
+                    {img.shareSlug && (
+                      <button
+                        onClick={() => handleShare(img)}
+                        className="p-1.5 rounded bg-secondary hover:bg-primary/20 transition-colors"
+                        title="Share"
+                      >
+                        {copiedId === img.id ? (
+                          <Check className="w-3.5 h-3.5 text-neon-green" />
+                        ) : (
+                          <Share2 className="w-3.5 h-3.5 text-foreground" />
+                        )}
+                      </button>
+                    )}
                   </div>
                   <div className="flex gap-2 mt-1">
                     <span className="px-1.5 py-0.5 rounded bg-primary/10 font-mono text-[8px] text-primary">{img.style}</span>
