@@ -8,6 +8,7 @@ interface GeneratedImage {
   style: string;
   model: string;
   timestamp: number;
+  imageUrl?: string;
 }
 
 interface ImageGalleryProps {
@@ -15,16 +16,16 @@ interface ImageGalleryProps {
   isGenerating: boolean;
 }
 
-// Deterministic placeholder gradients
-const GRADIENTS = [
-  "from-neon-cyan/20 via-neon-purple/20 to-neon-pink/20",
-  "from-neon-purple/20 via-neon-cyan/20 to-neon-green/20",
-  "from-neon-orange/20 via-neon-pink/20 to-neon-purple/20",
-  "from-neon-green/20 via-neon-cyan/20 to-neon-purple/20",
-];
-
 const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const handleDownload = (img: GeneratedImage) => {
+    if (!img.imageUrl) return;
+    const link = document.createElement("a");
+    link.href = img.imageUrl;
+    link.download = `forgeimg-${img.id.slice(0, 8)}.png`;
+    link.click();
+  };
 
   if (images.length === 0 && !isGenerating) {
     return (
@@ -50,7 +51,8 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
             animate={{ opacity: 1, scale: 1 }}
             className="aspect-square rounded-lg metal-panel overflow-hidden relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10 animate-shimmer" 
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10 animate-shimmer"
               style={{ backgroundSize: "200% 100%" }}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -72,15 +74,22 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
               onMouseLeave={() => setHoveredId(null)}
               className="aspect-square rounded-lg metal-panel overflow-hidden relative group cursor-pointer"
             >
-              {/* Placeholder gradient image */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]}`} />
-              <div className="absolute inset-0 diamond-plate opacity-10" />
-              
-              {/* Abstract shapes to simulate generated image */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 blur-xl" />
-                <div className="absolute w-12 h-12 rounded-lg bg-accent/10 blur-lg rotate-45" />
-              </div>
+              {img.imageUrl ? (
+                <img
+                  src={img.imageUrl}
+                  alt={img.prompt}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/20 via-neon-purple/20 to-neon-pink/20" />
+                  <div className="absolute inset-0 diamond-plate opacity-10" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 blur-xl" />
+                  </div>
+                </>
+              )}
 
               {/* Hover overlay */}
               {hoveredId === img.id && (
@@ -91,7 +100,11 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
                 >
                   <p className="font-mono text-[10px] text-foreground text-center line-clamp-2">{img.prompt}</p>
                   <div className="flex gap-1.5 mt-2">
-                    <button className="p-1.5 rounded bg-secondary hover:bg-primary/20 transition-colors" title="Download">
+                    <button
+                      onClick={() => handleDownload(img)}
+                      className="p-1.5 rounded bg-secondary hover:bg-primary/20 transition-colors"
+                      title="Download"
+                    >
                       <Download className="w-3.5 h-3.5 text-foreground" />
                     </button>
                     <button className="p-1.5 rounded bg-secondary hover:bg-primary/20 transition-colors" title="Regenerate">
