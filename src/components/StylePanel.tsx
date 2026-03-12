@@ -12,20 +12,20 @@ interface Style {
 }
 
 const STYLES: Style[] = [
-  { id: "realistic", name: "Realistic", icon: <Camera className="w-4 h-4" />, color: "neon-cyan" },
-  { id: "abstract", name: "Abstract", icon: <Waves className="w-4 h-4" />, color: "neon-purple" },
-  { id: "cartoon", name: "Cartoon", icon: <Gamepad2 className="w-4 h-4" />, color: "neon-green" },
-  { id: "watercolor", name: "Watercolor", icon: <Droplets className="w-4 h-4" />, color: "neon-cyan" },
-  { id: "retro", name: "Retro", icon: <Tv className="w-4 h-4" />, color: "neon-orange" },
-  { id: "negative", name: "Negative", icon: <Skull className="w-4 h-4" />, color: "neon-pink" },
-  { id: "cyberpunk", name: "Cyberpunk", icon: <Zap className="w-4 h-4" />, color: "neon-purple" },
-  { id: "pixel-art", name: "Pixel Art", icon: <Grid3X3 className="w-4 h-4" />, color: "neon-green" },
-  { id: "oil-painting", name: "Oil Painting", icon: <Paintbrush className="w-4 h-4" />, color: "neon-orange" },
-  { id: "3d-render", name: "3D Render", icon: <Box className="w-4 h-4" />, color: "neon-cyan" },
-  { id: "anime", name: "Anime", icon: <Star className="w-4 h-4" />, color: "neon-pink" },
-  { id: "noir", name: "Noir", icon: <Moon className="w-4 h-4" />, color: "neon-cyan" },
-  { id: "vaporwave", name: "Vaporwave", icon: <Palette className="w-4 h-4" />, color: "neon-purple" },
-  { id: "surrealism", name: "Surrealism", icon: <Eye className="w-4 h-4" />, color: "neon-orange" },
+  { id: "realistic", name: "Realistic", icon: <Camera className="w-5 h-5" />, color: "neon-cyan" },
+  { id: "abstract", name: "Abstract", icon: <Waves className="w-5 h-5" />, color: "neon-purple" },
+  { id: "cartoon", name: "Cartoon", icon: <Gamepad2 className="w-5 h-5" />, color: "neon-green" },
+  { id: "watercolor", name: "Watercolor", icon: <Droplets className="w-5 h-5" />, color: "neon-cyan" },
+  { id: "retro", name: "Retro", icon: <Tv className="w-5 h-5" />, color: "neon-orange" },
+  { id: "negative", name: "Negative", icon: <Skull className="w-5 h-5" />, color: "neon-pink" },
+  { id: "cyberpunk", name: "Cyberpunk", icon: <Zap className="w-5 h-5" />, color: "neon-purple" },
+  { id: "pixel-art", name: "Pixel Art", icon: <Grid3X3 className="w-5 h-5" />, color: "neon-green" },
+  { id: "oil-painting", name: "Oil Painting", icon: <Paintbrush className="w-5 h-5" />, color: "neon-orange" },
+  { id: "3d-render", name: "3D Render", icon: <Box className="w-5 h-5" />, color: "neon-cyan" },
+  { id: "anime", name: "Anime", icon: <Star className="w-5 h-5" />, color: "neon-pink" },
+  { id: "noir", name: "Noir", icon: <Moon className="w-5 h-5" />, color: "neon-cyan" },
+  { id: "vaporwave", name: "Vaporwave", icon: <Palette className="w-5 h-5" />, color: "neon-purple" },
+  { id: "surrealism", name: "Surrealism", icon: <Eye className="w-5 h-5" />, color: "neon-orange" },
 ];
 
 interface StylePanelProps {
