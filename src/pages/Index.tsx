@@ -109,10 +109,10 @@ const Index = () => {
         imagePath: data.savedPath,
       };
       setImages((prev) => [newImage, ...prev]);
-      toast.success("Image forged successfully!");
+      toast.success("Image materialized successfully!");
     } catch (err: any) {
       console.error("Generation error:", err);
-      toast.error(err.message || "Failed to generate image.");
+      toast.error(err.message || "Failed to synthesize image.");
     } finally {
       setIsGenerating(false);
     }
