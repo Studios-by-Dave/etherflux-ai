@@ -214,7 +214,7 @@ const Landing = () => {
       <footer className="border-t border-border py-6 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <span className="font-mono text-[10px] text-muted-foreground/50">
-            FORGEIMG NEURAL IMAGE FOUNDRY © 2026
+            EtherFlux AI — Neural Image Synthesis © 2026
           </span>
           <span className="font-mono text-[10px] text-muted-foreground/50">
             POWERED BY NANO BANANA

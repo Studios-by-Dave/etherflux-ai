@@ -66,10 +66,10 @@ const Auth = () => {
           </div>
           <div>
             <h1 className="font-display text-2xl font-bold tracking-wider text-primary neon-glow-cyan">
-              FORGE<span className="text-foreground">IMG</span>
+              EtherFlux
             </h1>
             <p className="font-mono text-[9px] text-muted-foreground tracking-[0.3em] uppercase">
-              Neural Image Foundry
+              Neural Image Synthesis
             </p>
           </div>
         </div>

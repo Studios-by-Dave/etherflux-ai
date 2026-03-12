@@ -43,7 +43,7 @@ const SharedImage = () => {
               <Cpu className="w-4 h-4 text-primary" />
             </div>
             <span className="font-display text-sm tracking-wider text-primary neon-glow-cyan">
-              FORGE<span className="text-foreground">IMG</span>
+              EtherFlux
             </span>
           </div>
           <Link to="/">

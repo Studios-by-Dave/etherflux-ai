@@ -195,7 +195,7 @@ const Index = () => {
             <span className="font-mono text-[10px] text-muted-foreground">•</span>
             <span className="font-mono text-[10px] text-muted-foreground">MODEL: {STYLE_MAP[selectedModel]?.toUpperCase()}</span>
           </div>
-          <span className="font-mono text-[10px] text-muted-foreground/50">FORGEIMG NEURAL IMAGE FOUNDRY © 2026</span>
+          <span className="font-mono text-[10px] text-muted-foreground/50">EtherFlux AI — Neural Image Synthesis © 2026</span>
         </div>
       </main>
     </div>
