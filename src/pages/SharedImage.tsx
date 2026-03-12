@@ -55,7 +55,7 @@ const SharedImage = () => {
 
         {isLoading ? (
           <div className="metal-panel rounded-lg p-20 text-center">
-            <span className="font-mono text-xs text-muted-foreground animate-pulse">LOADING FORGED IMAGE...</span>
+            <span className="font-mono text-xs text-muted-foreground animate-pulse">LOADING SYNTHESIZED IMAGE...</span>
           </div>
         ) : !image ? (
           <div className="metal-panel rounded-lg p-20 text-center">

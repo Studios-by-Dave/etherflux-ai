@@ -109,10 +109,10 @@ const Index = () => {
         imagePath: data.savedPath,
       };
       setImages((prev) => [newImage, ...prev]);
-      toast.success("Image forged successfully!");
+      toast.success("Image materialized successfully!");
     } catch (err: any) {
       console.error("Generation error:", err);
-      toast.error(err.message || "Failed to generate image.");
+      toast.error(err.message || "Failed to synthesize image.");
     } finally {
       setIsGenerating(false);
     }
@@ -191,7 +191,7 @@ const Index = () => {
 
         <div className="mt-8 py-4 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span className="font-mono text-[10px] text-muted-foreground">{images.length} IMAGE{images.length !== 1 ? "S" : ""} FORGED</span>
+            <span className="font-mono text-[10px] text-muted-foreground">{images.length} IMAGE{images.length !== 1 ? "S" : ""} CREATED</span>
             <span className="font-mono text-[10px] text-muted-foreground">•</span>
             <span className="font-mono text-[10px] text-muted-foreground">MODEL: {STYLE_MAP[selectedModel]?.toUpperCase()}</span>
           </div>

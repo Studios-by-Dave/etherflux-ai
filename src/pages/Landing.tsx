@@ -22,7 +22,7 @@ const features = [
   {
     icon: Share2,
     title: "Public Gallery & Sharing",
-    description: "Share your creations with public links. Build your portfolio of forged images.",
+    description: "Share your creations with public links. Build your portfolio of synthesized images.",
   },
 ];
 
@@ -76,22 +76,21 @@ const Landing = () => {
           <div className="inline-flex items-center gap-2 metal-panel rounded-full px-4 py-1.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
             <span className="font-mono text-[10px] text-muted-foreground tracking-wider">
-              NEURAL FORGE ONLINE — v2.4.1
+              NEURAL SYNTHESIS ONLINE — v2.4.1
             </span>
           </div>
 
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-wider leading-tight mb-6">
-            <span className="text-primary neon-glow-cyan">FORGE</span>{" "}
-            <span className="text-foreground">IMAGES</span>
+            <span className="text-primary neon-glow-cyan">IMAGES</span>
             <br />
-            <span className="text-muted-foreground text-2xl sm:text-3xl lg:text-4xl">
-              FROM PURE IMAGINATION
+            <span className="text-foreground text-2xl sm:text-3xl lg:text-4xl tracking-[0.1em]">
+              MATERIALIZED FROM THE ETHER
             </span>
           </h2>
 
           <p className="font-body text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-            Industrial-grade AI image generation. Describe what you see in your mind.
-            The Forge will bring it to life in seconds.
+            Industrial-grade AI image synthesis. Describe what you see in your mind.
+            EtherFlux will bring it to life in seconds.
           </p>
 
           <div className="flex items-center justify-center gap-4">
