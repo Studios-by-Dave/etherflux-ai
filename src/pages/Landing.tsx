@@ -45,7 +45,7 @@ const Landing = () => {
             </div>
             <div>
               <h1 className="font-display text-xl font-bold tracking-wider text-primary neon-glow-cyan">
-                FORGE<span className="text-foreground">IMG</span>
+                EtherFlux
               </h1>
             </div>
           </div>
