@@ -36,7 +36,7 @@ interface StylePanelProps {
 const StylePanel = ({ selectedStyle, onStyleChange }: StylePanelProps) => {
   return (
     <div>
-      <label className="font-display text-[10px] tracking-[0.2em] text-muted-foreground uppercase mb-3 block">
+      <label className="font-display text-[11px] tracking-[0.2em] text-muted-foreground uppercase mb-3 block">
         Style Presets
       </label>
       <div className="grid grid-cols-7 sm:grid-cols-7 gap-2">
@@ -51,7 +51,7 @@ const StylePanel = ({ selectedStyle, onStyleChange }: StylePanelProps) => {
               transition={{ delay: i * 0.03 }}
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative flex flex-col items-center gap-1.5 p-2.5 rounded-lg transition-all duration-300 ${
+              className={`relative flex flex-col items-center gap-2 p-3 rounded-lg transition-all duration-300 ${
                 isSelected
                   ? `metal-panel neon-border-cyan bg-primary/10`
                   : "bg-secondary/30 hover:bg-secondary/60 border border-transparent"
@@ -60,7 +60,7 @@ const StylePanel = ({ selectedStyle, onStyleChange }: StylePanelProps) => {
               <div className={isSelected ? "text-primary" : "text-muted-foreground"}>
                 {style.icon}
               </div>
-              <span className={`font-mono text-[9px] leading-tight text-center ${
+              <span className={`font-mono text-[10px] leading-tight text-center ${
                 isSelected ? "text-primary" : "text-muted-foreground"
               }`}>
                 {style.name}
