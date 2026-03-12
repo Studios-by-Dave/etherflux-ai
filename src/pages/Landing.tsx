@@ -22,7 +22,7 @@ const features = [
   {
     icon: Share2,
     title: "Public Gallery & Sharing",
-    description: "Share your creations with public links. Build your portfolio of forged images.",
+    description: "Share your creations with public links. Build your portfolio of synthesized images.",
   },
 ];
 

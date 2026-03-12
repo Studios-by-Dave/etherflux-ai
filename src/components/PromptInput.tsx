@@ -28,7 +28,7 @@ const PromptInput = ({ prompt, onPromptChange, onGenerate, onEnhance, isGenerati
           onChange={(e) => onPromptChange(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder="Describe the image you want to forge..."
+          placeholder="Describe the image you want to materialize..."
           rows={4}
           className="w-full bg-transparent px-4 pt-4 pb-12 text-foreground font-body text-lg placeholder:text-muted-foreground/50 focus:outline-none resize-none"
         />
