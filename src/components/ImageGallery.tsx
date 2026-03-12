@@ -29,7 +29,7 @@ const ImageGallery = ({ images, isGenerating }: ImageGalleryProps) => {
     if (!img.imageUrl) return;
     const link = document.createElement("a");
     link.href = img.imageUrl;
-    link.download = `forgeimg-${img.id.slice(0, 8)}.png`;
+    link.download = `etherflux-${img.id.slice(0, 8)}.png`;
     link.click();
   };
 
