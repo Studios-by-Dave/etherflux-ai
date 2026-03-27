@@ -51,7 +51,7 @@ const StylePanel = ({ selectedStyle, onStyleChange }: StylePanelProps) => {
               transition={{ delay: i * 0.03 }}
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative flex flex-col items-center gap-2 p-3.5 rounded-xl transition-all duration-300 overflow-hidden ${
+              className={`style-btn-shimmer relative flex flex-col items-center gap-2 p-3.5 rounded-xl transition-all duration-300 overflow-hidden ${
                 isSelected
                   ? `metal-panel neon-border-cyan bg-primary/10`
                   : "bg-secondary/30 hover:bg-secondary/60 border border-transparent"
