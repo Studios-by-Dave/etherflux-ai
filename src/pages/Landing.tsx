@@ -96,7 +96,7 @@ const Landing = () => {
           <div className="flex items-center justify-center gap-4">
             <Link to="/auth">
               <Button size="lg" className="font-display text-xs tracking-[0.15em] uppercase bg-primary text-primary-foreground hover:bg-primary/90 px-8">
-                Start Forging Free
+                Start Generating Free
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
