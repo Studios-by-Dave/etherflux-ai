@@ -175,26 +175,4 @@
     pointer-events: none;
     z-index: 1;
   }
-
-  @keyframes shimmer {
-    0% { transform: translateX(-150%) rotate(15deg); }
-    100% { transform: translateX(150%) rotate(15deg); }
-  }
-
-  .style-btn-shimmer::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 30%,
-      hsl(var(--primary) / 0.15) 45%,
-      hsl(var(--primary) / 0.25) 50%,
-      hsl(var(--primary) / 0.15) 55%,
-      transparent 70%
-    );
-    animation: shimmer 3s ease-in-out infinite;
-    pointer-events: none;
-    border-radius: inherit;
-  }
 }
