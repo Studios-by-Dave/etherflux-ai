@@ -1,10 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
+// Simple in-memory rate limiting store
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 5; // requests per minute
+const RATE_WINDOW = 60 * 1000; // 1 minute in milliseconds
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": import.meta.env?.MODE === 'development' 
+    ? "http://localhost:8080" 
+    : "https://dtvnpgqcoyrcsoqqtzom.supabase.co",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
 };
 
 serve(async (req) => {
@@ -16,9 +25,75 @@ serve(async (req) => {
     const authHeader = req.headers.get("authorization");
     const { prompt, style, model, referenceImage } = await req.json();
 
+    // Rate limiting check
+    const clientIP = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const now = Date.now();
+    const userLimit = rateLimitStore.get(clientIP);
+    
+    if (userLimit && userLimit.resetTime > now) {
+      if (userLimit.count >= RATE_LIMIT) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please wait before making more requests." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      userLimit.count++;
+    } else {
+      rateLimitStore.set(clientIP, { count: 1, resetTime: now + RATE_WINDOW });
+    }
+
+    // Clean up old entries
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (value.resetTime <= now) {
+        rateLimitStore.delete(key);
+      }
+    }
+
+    // Enhanced input validation
     if (!prompt || typeof prompt !== "string") {
       return new Response(
         JSON.stringify({ error: "A text prompt is required." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate prompt length and content
+    if (prompt.length < 3 || prompt.length > 1000) {
+      return new Response(
+        JSON.stringify({ error: "Prompt must be between 3 and 1000 characters." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Sanitize prompt for potential injection attempts
+    const suspiciousPatterns = /<script|javascript:|data:|vbscript:|onload=|onerror=/i;
+    if (suspiciousPatterns.test(prompt)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid prompt content detected." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate style parameter
+    const validStyles = ["realistic", "abstract", "cartoon", "watercolor", "retro", "negative", "cyberpunk", "pixel-art", "oil-painting", "3d-render", "anime", "noir", "vaporwave", "surrealism"];
+    if (style && !validStyles.includes(style)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid style parameter." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate reference image if provided
+    if (referenceImage && typeof referenceImage !== "string") {
+      return new Response(
+        JSON.stringify({ error: "Invalid reference image format." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (referenceImage && !referenceImage.startsWith("data:image/") && !referenceImage.startsWith("http")) {
+      return new Response(
+        JSON.stringify({ error: "Invalid reference image URL format." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
